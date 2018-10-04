@@ -16,8 +16,8 @@ public class MatrixMultiplication {
       // Generate two random matrices, same size
       double[][] a = generateRandomMatrix(MATRIX_SIZE, MATRIX_SIZE);
       double[][] b = generateRandomMatrix(MATRIX_SIZE, MATRIX_SIZE);
-      double[][] c = new double[MATRIX_SIZE][MATRIX_SIZE];
-      double[][] d = new double[MATRIX_SIZE][MATRIX_SIZE];
+      double[][] c;
+      double[][] d;
       c=sequentialMultiplyMatrix(a,b);
       d=parallelMultiplyMatrix(a, b);
       System.out.println("Seq: " + java.util.Arrays.deepToString(c));
@@ -51,6 +51,7 @@ public class MatrixMultiplication {
     * @param b is the second matrix
     * @return the result of the multiplication
     * */
+   //only works on MATRIX_SIZE = 2^n for now
     public static double[][] parallelMultiplyMatrix(double[][] a, double[][] b) {
         return multiply(a,b,0,0,0,0,MATRIX_SIZE);
      }
