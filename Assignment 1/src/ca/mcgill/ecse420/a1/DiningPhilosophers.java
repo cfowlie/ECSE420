@@ -29,7 +29,16 @@ public class DiningPhilosophers {
 				rightChopstick = chopsticks[1];
 			}
 
-			philosophers[i] = new Philosopher(leftChopstick, rightChopstick);
+
+			// Deadlock occurs when all philosophers are holding one chopstick
+			// If last philospher picks up right instead of left first, deadlock avoided
+
+			if(i < numberOfPhilosophers -1){
+				philosophers[i] = new Philosopher(leftChopstick, rightChopstick);
+			} else {
+				philosophers[i] = new Philosopher(rightChopstick, leftChopstick);
+			}
+
 			Thread t = new Thread(philosophers[i], "Philosopher " + (i + 1));
 			t.start();
 		}
@@ -55,9 +64,13 @@ public class DiningPhilosophers {
 					think();
 
 					// Get left chopstick
-					synchronized (leftChopstick) {
+					synchronized (leftChopstick) { // Sync ensures only one thread accesses object at once
+
+						// Wait time between left pick up and right pick up
+						Thread.sleep(((int) (Math.random() * 100)));
+
 						//Get right chopstick
-						synchronized (rightChopstick) {
+						synchronized (rightChopstick) { // Can only attempt to pick up right if already has left (Deadlock avoidance)
 							// Can eat
 							eat();
 						}
@@ -65,6 +78,10 @@ public class DiningPhilosophers {
 
 					// Puts down chopsticks as sync ends
 					think();
+
+					// Thinking at end ensures time for other threads to pick up (avoids starvation)
+					// Starvation could be explicitly avoided by placing chopstick requests in priority queue
+					// Not necessary for requests of 2 resources and low number of consumers
 				}
 			} catch (InterruptedException e) {
 				e.printStackTrace();
