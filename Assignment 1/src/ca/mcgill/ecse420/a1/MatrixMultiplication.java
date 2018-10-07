@@ -2,27 +2,53 @@ package ca.mcgill.ecse420.a1;
 
 import  com.sun.org.apache.xpath.internal.operations.Mult;
 
+import java.util.concurrent.*;
 import java.util.concurrent.ExecutorService;
 import java.util.concurrent.Executors;
+import java.util.concurrent.FutureTask;
 
 public class MatrixMultiplication {
    
-   private static final int NUMBER_THREADS = 4;
-   private static final int MATRIX_SIZE = 100 ;
-//   private static final int THRESHOLD = 64;
-   private final ExecutorService executor = Executors.newFixedThreadPool(NUMBER_THREADS);
+   private static final int NUMBER_THREADS = 32;
+   private static final int MATRIX_SIZE = 2048 ;
+   private static final int THRESHOLD = 64;
+   private static final ExecutorService executor = Executors.newFixedThreadPool(NUMBER_THREADS);
     public static void main(String[] args) {
       
       // Generate two random matrices, same size
       double[][] a = generateRandomMatrix(MATRIX_SIZE, MATRIX_SIZE);
       double[][] b = generateRandomMatrix(MATRIX_SIZE, MATRIX_SIZE);
-      double[][] c;
-      double[][] d;
-      c=sequentialMultiplyMatrix(a,b);
-      d=parallelMultiplyMatrix(a, b);
-      System.out.println("Seq: " + java.util.Arrays.deepToString(c));
-      System.out.println("parallel: " + java.util.Arrays.deepToString(d));
-   }
+
+
+
+
+
+
+      System.out.println("Matrix size: " + MATRIX_SIZE +" x " + MATRIX_SIZE);
+      System.out.println("Max Threads: " + NUMBER_THREADS);
+      measureTime(a,b);
+
+
+
+
+    }
+
+    public static void measureTime(double[][] a, double[][] b){
+
+        double[][] c;
+        double[][] d;
+
+        double seqStart = System.nanoTime();
+//       c=sequentialMultiplyMatrix(a,b);
+        double seqEnd = System.nanoTime();
+
+        double parStart = System.nanoTime();
+        d=parallelMultiplyMatrix(a, b);
+        double parEnd = System.nanoTime();
+
+        System.out.println("Time taken for Sequential :" +(seqEnd-seqStart)/1000000000 + " Seconds");
+        System.out.println("Time taken for Parallel :" +(parEnd-parStart)/1000000000 + " Seconds");
+    }
    /**
     * Returns the result of a sequential matrix multiplication
     * The two matrices are randomly generated
@@ -53,91 +79,111 @@ public class MatrixMultiplication {
     * */
    //only works on MATRIX_SIZE = 2^n for now
     public static double[][] parallelMultiplyMatrix(double[][] a, double[][] b) {
-        return multiply(a,b,0,0,0,0,MATRIX_SIZE);
+//        return multiply(a,b,0,0,0,0,MATRIX_SIZE);
+        double[][] res=new double[MATRIX_SIZE][MATRIX_SIZE];
+        Future f1 = executor.submit(new Multiply(a,b,res,0,0,0,0,0,0
+        ,MATRIX_SIZE));
+        try{
+            f1.get();
+            executor.shutdown();
+        } catch (Exception e){
+
+        }
+        return res;
      }
 
-     public static double[][] multiply(double[][] a, double[][] b, int aRow, int bRow, int aCol, int bCol, int size){
-        double[][] resultMatrix = new double[size][size];
-         if(size==1){
-             resultMatrix[0][0]=a[aRow][aCol]*b[bRow][bCol];
+     static class Multiply implements Runnable{
+        private double[][] a;
+        private double[][] b;
+        private double[][] res;
+        private int a_row, a_col, b_row, b_col, res_row, res_col, size;
+
+        Multiply(double[][] a, double[][] b, double[][] res, int a_row, int a_col, int b_row, int b_col
+        , int res_row, int res_col, int size){
+            this.a = a;
+            this.b = b;
+            this.res = res;
+
+            this.a_row = a_row;
+            this.a_col = a_col;
+            this.b_row = b_row;
+            this.b_col = b_col;
+            this.res_row = res_row;
+            this.res_col = res_col;
+
+            this.size = size;
+        }
+
+        public void run(){
+            int half = size/2;
+            if(size<=THRESHOLD){
+                for (int i=0;i<size;i++){
+                    for (int j=0;j<size;j++){
+                        for (int l=0;l<size;l++){
+                            res[res_row+i][res_col+j] +=a[a_row+i][a_col+l]*b[b_row+l][b_col+j];
+                        }
+                    }
+                }
+            } else{
+                Multiply[] todo = {
+                        new Multiply(a,b,res,a_row,a_col,b_row,b_col,res_row,res_col,half),
+                        new Multiply(a,b,res,a_row,a_col+half,b_row+half,b_col,res_row
+                                ,res_col,half),
+
+
+                        new Multiply(a,b,res,a_row,a_col,b_row,b_col+half,res_row,res_col+half,
+                        half),
+                        new Multiply(a,b,res,a_row,a_col+half,b_row+half,b_col+half,
+                                res_row, res_col+half, half),
+
+
+                        new Multiply(a, b, res, a_row+half, a_col, b_row, b_col, res_row+half,
+                                res_col, half),
+                        new Multiply(a, b, res, a_row+half, a_col+half, b_row+half, b_col,
+                                res_row+half, res_col, half),
+
+
+                        new Multiply(a, b, res, a_row+half, a_col, b_row, b_col+half,
+                                res_row+half, res_col+half, half),
+                        new Multiply(a, b, res, a_row+half, a_col+half, b_row+half,
+                                b_col+half, res_row+half, res_col+half, half)
+
+                };
+                FutureTask[] fs1 = new FutureTask[todo.length/2];
+
+                for (int i=0;i<todo.length;i+=2) {
+                    fs1[i / 2] = new FutureTask(new HelperSeq(todo[i], todo[i + 1]), null);
+                    executor.execute(todo[i/2]);
+                }
+                for (int i=0;i<fs1.length;++i){
+                    fs1[i].run();
+                }
+                try {
+                    for (int i = 0; i < fs1.length; ++i) {
+                        fs1[i].get();
+                    }
+                }   catch (Exception e){
+
+                    }
+                }
+            }
          }
-        else if(size<=64){
-            int miniSize = size/2;
-            add(resultMatrix,multiply(a, b, aRow, bRow, aCol, bCol, miniSize),multiply(a, b, aRow, bRow+ miniSize,
-                    aCol+miniSize, bCol, miniSize),0, 0);
-
-            add(resultMatrix,multiply(a, b, aRow, bRow, aCol, bCol + miniSize, miniSize),
-                    multiply(a, b, aRow, bRow+ miniSize, aCol+miniSize, bCol+miniSize, miniSize),0, miniSize);
-
-            add(resultMatrix,multiply(a, b, aRow+ miniSize, bRow, aCol, bCol, miniSize),
-                    multiply(a, b, aRow+ miniSize, bRow+ miniSize, aCol+miniSize,
-                            bCol, miniSize),miniSize, 0);
-
-            add(resultMatrix,multiply(a, b, aRow+ miniSize, bRow, aCol, bCol+miniSize, miniSize)
-                    ,multiply(a, b, aRow+ miniSize, bRow+ miniSize, aCol+miniSize, bCol+miniSize,
-                      miniSize),miniSize, miniSize);
 
 
-        }else{
+     static class HelperSeq implements Runnable{
 
-            int miniSize = size/2;
-            class MultiplyMatrices implements Runnable{
-                private Thread t1;
-                private String name;
-                MultiplyMatrices(String threadName){
-                    this.name = threadName;
-                }
-                public void run(){
-                    if (name=="q1"){
-                        add(resultMatrix,multiply(a,b,aRow,bRow,aCol,bCol,miniSize),
-                                multiply(a,b,aRow,bRow+miniSize,aCol+miniSize,bCol,miniSize),0,0);
-                    }else if(name=="q2"){
-                        add(resultMatrix,multiply(a,b,aRow,bRow,aCol,bCol + miniSize,miniSize),
-                                multiply(a,b,aRow,bRow+miniSize,aCol+miniSize,bCol+miniSize,miniSize),0,miniSize);
-                    } else if(name=="q3"){
-                        add(resultMatrix,multiply(a,b,aRow+miniSize,bRow,aCol,bCol,miniSize),
-                                multiply(a,b,aRow+miniSize,bRow+miniSize,aCol+miniSize,bCol,miniSize),miniSize,0);
-                    } else if(name=="q4"){
-                        add(resultMatrix,multiply(a,b,aRow + miniSize,bRow,aCol,bCol + miniSize,miniSize),
-                                multiply(a,b,aRow+miniSize,bRow+miniSize,aCol+miniSize,bCol+miniSize,miniSize),
-                                miniSize,miniSize);
-                    }
-                }
-                public void start(){
-                    if(t1==null){
-                        t1= new Thread(this,"Thread1");
-                        t1.start();
-                    }
-                }
-            }
-            MultiplyMatrices mul1= new MultiplyMatrices("q1");
-            mul1.start();
-            MultiplyMatrices mul2= new MultiplyMatrices("q2");
-            mul2.start();
-            MultiplyMatrices mul3= new MultiplyMatrices("q3");
-            mul3.start();
-            MultiplyMatrices mul4= new MultiplyMatrices("q4");
-            mul4.start();
 
-            for (Thread t : new Thread[] {mul1.t1,mul2.t1,mul3.t1,mul4.t1}){
-                try{
-                    t.join();
-                } catch (Exception e){
-
-                }
-            }
+        private Multiply m1, m2;
+        HelperSeq(Multiply m1, Multiply m2){
+            this.m1 = m1;
+            this.m2 = m2;
         }
-        return resultMatrix;
-     }
-     public static void add(double[][] res, double[][] a, double[][] b, int resRow, int resCol){
-        int size = a.length;
-        for(int i=0;i<size;i++){
-            for(int j=0;j<size;j++){
-                res[i+resRow][j+resCol] = a[i][j]+b[i][j];
-            }
+        public void run(){
+            m1.run();
+            m2.run();
         }
-     }
 
+    }
 
         
         /**
