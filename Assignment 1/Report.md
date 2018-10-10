@@ -43,7 +43,7 @@ k(1.8+0.8/n)<1.6-1.6/n
 
 k<(1.6-1.6/n)/(1.8+0.8/n)
 
-###4.3
+### 4.3
 
 Let a1 be the original acceleration and a2 the second. Since the program is half as fast, we know that a2/a1=2
 
