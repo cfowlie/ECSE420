@@ -21,4 +21,26 @@ This would result in the parrallel section (60%) happening instantly, leaving on
 This results in a speed up maximum of 2.5x.
 
 
+### 4.2
+Sn  = 1/((1-p)+p/n). Furthermore SÕn>2*Sn => SÕn>2/((1-p)+p/n)
+
+SÕn=1/((1-p/k)+p/(n*k))
+
+1/((1-p/k)+p/(n*k))> 2/((1-p)+p/n)
+Flip => 1-p/k+p/(n*k)<1/2(1-p+p/n)
+
+p=0.8
+
+2-2*0.8/k+2*0.8/(n*k)<1-0.8+0.8/n
+
+Multiply by k:
+
+2k-1.6+1.6/n<k-0.8k+0.8k/n*
+
+2k-0.2k+0.8k/n<1.6-1.6/n
+
+k(1.8+0.8/n)<1.6-1.6/n
+
+k<(1.6-1.6/n)/(1.8+0.8/n)
+
 
