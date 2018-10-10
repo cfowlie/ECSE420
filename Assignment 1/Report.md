@@ -43,4 +43,21 @@ k(1.8+0.8/n)<1.6-1.6/n
 
 k<(1.6-1.6/n)/(1.8+0.8/n)
 
+###4.3
+
+Let a1 be the original acceleration and a2 the second. Since the program is half as fast, we know that a2/a1=2
+
+A1=1/((1-p)+p/n)=q/(s+(1-s)/n)
+A2=1/((s/3)+(1-s/3)/n)
+
+ a2/a1=2
+<=> 2=(1/(s/3+(1-s/3)/n)/(1/(s+(1-s)/n))
+<=> 2*(1/(s+(1-s)/n))=(1/(s/3+(1-s/3)/n)
+<=> 2s/3+2/n-2s/3n=s+(1-s)/n
+<=> 2sn +6 -2s = 3sn +3-3s
+<=> 2sn-3sn-2s+3s=-3
+<=> -sn+s=-3
+<=> s(n-1)=3
+<=> s=3/(n-1)
+
 
