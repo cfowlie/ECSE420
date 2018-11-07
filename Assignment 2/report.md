@@ -27,3 +27,18 @@ Reference:
 
 The art of multiprocessor programming, Maurice Herlihy, Nir Shavit.
 (LockOne and LockTwo algorithms).
+
+## Question 3
+
+3.1) Suppose two threads, A and B, enter their critical sections at the same time, with A being the one that arrived first.
+When A arrived, "busy" must have been set to true. When B arrives, turn is set to B, and since busy is true, B will be stuck
+in its while loop. Now, in order for B to have entered its critical section, then busy must have been set to false at some
+point. In order for busy to have been set to false, A or B must have
+called unlock(), contradicting our original assumption, which satisfies mutual exclusion.
+
+3.2) 
+
+3.3) Assume multiple threads are stuck in the wile loop on line 9, while another thread A is in its critical section. When
+thread A exits its critical section and unlocks, the thread that most recently set turn to be itself will be the one to enter
+its critical section next, creating potential starvation since there's no ordered way to select the next thread to enter
+its critical section.
