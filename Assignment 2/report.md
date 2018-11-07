@@ -16,7 +16,7 @@ B-	Thread A reads the new value of flag[j]: true and remains in the loop.
 
 Fig 2. LockTwo algorithm
 
-Once again, we can see tat victim is only read() once - on line 6. Suppose again we have two threads A and B, with thread A already in the while loop and an overlap occurs in thread B on line 5. We then again have two cases:
+Once again, we can see that victim is only read() once - on line 6. Suppose again we have two threads A and B, with thread A already in the while loop and an overlap occurs in thread B on line 5. We then again have two cases:
 
 A-	Thread A reads the old value of victim: ThreadA and remains in the loop, allowing B to enter its critical section.
 B-	Thread A reads the new value of victim: ThreadB and enter its own critical section while B is in the while loop.
