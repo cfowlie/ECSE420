@@ -64,16 +64,20 @@ its critical section.
 
 ### TODO add explanation
 
- *fig 2b. P: Linearizability,
+-fig 2b.
+
+P: Linearizability,
 
 Q: Sequential consistency.
 
-We know P->Q, meaning NOT Q -> NOT P. we have already proved not Q, there for the history in fig 2b is not linearizable.
+We know P->Q, meaning NOT Q -> NOT P. We have already proved NOT Q, therefore the history in fig 2b is not linearizable.
 
 ## Question 5
 
 
-5.1) It is indeed possible for a division by 0 to occur. Volatile​ ​fields​ ​are​ ​used​ ​for​ ​communicating​ ​state​ ​between​ ​threads.​ ​Value​ ​returned​ ​from​ ​a​ ​​read()​​ ​call​ ​will be​ ​the​ ​​last​​ ​value​ ​written​ ​to​ ​that​ ​volatile​ ​field​ ​by​ ​any​ ​thread. The boolean v is volatile, wheres the integer x is not. So if thread A calls writer(), it'll write 42 into x and true into v. However since v is volatile, if B calls reader() before calling writer() itself, then v will be true, and x will be 0, which validates the if condition on line 9, incurring a division by 0. A:writer()->B:reader() would incur the division by 0.
+5.1) It is indeed possible for a division by 0 to occur. Volatile​ ​fields​ ​are​ ​used​ ​for​ ​communicating​ ​state​ ​between​ ​threads.​ ​Value​ ​returned​ ​from​ ​a​ ​​read()​​ ​call​ ​will be​ ​the​ ​​last​​ ​value​ ​written​ ​to​ ​that​ ​volatile​ ​field​ ​by​ ​any​ ​thread.
+
+ The boolean v is volatile, wheres the integer x is not. So if thread A calls writer(), it'll write 42 into x and true into v. However since v is volatile, if B calls reader() before calling writer() itself, then v will be true, and x will be 0, which validates the if condition on line 9, incurring a division by 0. A:writer()->B:reader() would incur the division by 0.
 
 5.2) In both cases division by 0 would be impossible. If both were volatile, then even if thread A calls writer() and B only calls reader(), v will be true and x will be 42.
 
