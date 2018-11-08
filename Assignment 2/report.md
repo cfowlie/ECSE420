@@ -8,9 +8,9 @@
 
 Now, let A be a thread that just completed the first for loop, i.e completed level[1]. Suppose, because of scheduling, A gets paused. It is then possible for any other thread which has already also completed level[1] to overtake A.
 
-### TODO 1.4)
+#### TODO 1.4)
 
-### TODO 1.5)
+#### TODO 1.5)
 
 ## Question 2
 In order to answer the question, we must first define the difference between atomic registers & regular registers. In an atomic register, read() will always return the last written value. In a regular register however, if a read overlaps a write then it may return that written value, or possibly the previous one.
@@ -19,7 +19,7 @@ In order to answer the question, we must first define the difference between ato
 Fig 1. LockOne algorithm
 
 
-As we can see, flag is only read() read once in LockOne is on line 8, in the while loop's condition. Suppose there are two threads, A and B running. A is stuck in the while loop, and an overlap occurs in thread B on line 7. We then have two cases if we're using regular registers:
+As we can see, flag is only read() once in LockOne, on line 8, in the while loop's condition. Suppose there are two threads, A and B running. A is stuck in the while loop, and an overlap occurs in thread B on line 7. We then have two cases if we're using regular registers:
 
 A-	Thread A reads the old value of flag[j]: true and remains in the loop
 
@@ -49,7 +49,7 @@ in its while loop. Now, in order for B to have entered its critical section, the
 point. In order for busy to have been set to false, A or B must have
 called unlock(), contradicting our original assumption, which satisfies mutual exclusion.
 
-### 3.2)  TODO
+#### 3.2)  TODO
 
 3.3) Assume multiple threads are stuck in the wile loop on line 9, while another thread A is in its critical section. When
 thread A exits its critical section and unlocks, the thread that most recently set turn to be itself will be the one to enter
