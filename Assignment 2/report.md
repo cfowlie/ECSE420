@@ -60,16 +60,24 @@ its critical section.
 
 -fig 2b  is not sequentially consistent. Assume it was. In order to read(2), write(1) must occur sometime before read(2) and write(2) must occur sometime between write(1) and read(2). So the order needs to be (i) write(1)->write(2)->read(2). In order to read(1), write(2) must occur some time before read(1) and write(1) must occur some time between write(2) and read(1). So the order needs to be (ii) write(2)->write(1)->read(1). Clearly (i) and (ii) contradict each other, meaning the history is not sequentially consistent.
 
--Neither histories are linearizable
+-Neither histories are linearizable:
 
 ### TODO add explanation
 
+ *fig 2b. P: Linearizability,
+
+Q: Sequential consistency.
+
+We know P->Q, meaning NOT Q -> NOT P. we have already proved not Q, there for the history in fig 2b is not linearizable.
+
 ## Question 5
-### TODO
 
-5.1)
 
-5.2)
+5.1) It is indeed possible for a division by 0 to occur. Volatile​ ​fields​ ​are​ ​used​ ​for​ ​communicating​ ​state​ ​between​ ​threads.​ ​Value​ ​returned​ ​from​ ​a​ ​​read()​​ ​call​ ​will be​ ​the​ ​​last​​ ​value​ ​written​ ​to​ ​that​ ​volatile​ ​field​ ​by​ ​any​ ​thread. The boolean v is volatile, wheres the integer x is not. So if thread A calls writer(), it'll write 42 into x and true into v. However since v is volatile, if B calls reader() before calling writer() itself, then v will be true, and x will be 0, which validates the if condition on line 9, incurring a division by 0. A:writer()->B:reader() would incur the division by 0.
+
+5.2) In both cases division by 0 would be impossible. If both were volatile, then even if thread A calls writer() and B only calls reader(), v will be true and x will be 42.
+
+If neither are volatile, the in order for v to ever be true in a thread that calls reader(), that thread must also have called writer(), setting x to 42 and avoid the division by 0.
 
 ## Question 6
 ### TODO
@@ -97,6 +105,7 @@ NOT Q -> NOT P, or P->Q.
 Assume that consensus over k>2 values is possible but binary consensus is impossible. By mapping
 
 [0,​ ​⌈k​ ​choose​ ​2⌉]​ ​→​ ​0
+
 [⌊k​ ​choose​ ​2⌋,​ ​k]​ ​→​ ​1,
 
 we then create a binary consensus, contradicting our proposition "binary consensus is impossible."
