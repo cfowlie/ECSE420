@@ -2,13 +2,15 @@
 ### Connor Fowlie 260687955 & Antoine Khouri 260683888
 
 ## Question 1
-### TODO
 
-1.2)
 
-1.4)
+1.2) Within a loop iteration, it is impossible for a thread to overtake another, because that would mean changing "victim". Doing so immediately releases the thread waiting in the while loop.
 
-1.5)
+Now, let A be a thread that just completed the first for loop, i.e completed level[1]. Suppose, because of scheduling, A gets paused. It is then possible for any other thread which has already also completed level[1] to overtake A.
+
+### TODO 1.4)
+
+### TODO 1.5)
 
 ## Question 2
 In order to answer the question, we must first define the difference between atomic registers & regular registers. In an atomic register, read() will always return the last written value. In a regular register however, if a read overlaps a write then it may return that written value, or possibly the previous one.
@@ -66,9 +68,7 @@ its critical section.
 
 -fig 2a.
 
-Not linearizable
-
-#### TODO add explanation
+If we flatten all 3 lines to a single one, we can see that there does not exist moments where the code would work sequentially. Therefore it is not linearizable.
 
 -fig 2b.
 
