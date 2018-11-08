@@ -79,7 +79,26 @@ its critical section.
 6.2)
 
 ## Question 7
-# TODO
+
+
+P: Binary consensus is impossible for 2 threads.
+
+Q: Binary consensus is impossible for >2 threads.
+
+In order to prove P->Q, we will show that NOT Q -> NOT P.
+
+Assume NOT Q: binary consensus possible for >2 threads.
+
+If it is possible for all threads in a certain set of threads, then it is also possible for any two threads in that set. Hence
+NOT Q -> NOT P, or P->Q.
 
 ## Question 8
-### TODO
+
+Assume that consensus over k>2 values is possible but binary consensus is impossible. By mapping
+
+[0,​ ​⌈k​ ​choose​ ​2⌉]​ ​→​ ​0
+[⌊k​ ​choose​ ​2⌋,​ ​k]​ ​→​ ​1,
+
+we then create a binary consensus, contradicting our proposition "binary consensus is impossible."
+
+Therefore, by contrapositive, consensus over k>2 is impossible if binary consensus is impossible.
