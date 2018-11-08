@@ -1,6 +1,14 @@
 # ECSE420 Assignment 2
 ### Connor Fowlie 260687955 & Antoine Khouri 260683888
 
+## Question 1 TODO
+
+1.2)
+
+1.4)
+
+1.5)
+
 ## Question 2
 In order to answer the question, we must first define the difference between atomic registers & regular registers. In an atomic register, read() will always return the last written value. In a regular register however, if a read overlaps a write then it may return that written value, or possibly the previous one.
 
@@ -38,7 +46,7 @@ in its while loop. Now, in order for B to have entered its critical section, the
 point. In order for busy to have been set to false, A or B must have
 called unlock(), contradicting our original assumption, which satisfies mutual exclusion.
 
-3.2)
+3.2) ## TODO
 
 3.3) Assume multiple threads are stuck in the wile loop on line 9, while another thread A is in its critical section. When
 thread A exits its critical section and unlocks, the thread that most recently set turn to be itself will be the one to enter
@@ -53,4 +61,20 @@ its critical section.
 
 -Neither histories are linearizable
 
-#TODO add explanation
+## TODO add explanation
+
+## Question 5 TODO
+
+5.1)
+
+5.2)
+
+## Question 6 TODO
+
+6.1)
+
+6.2)
+
+## Question 7 TODO
+
+## Question 8 TODO
