@@ -56,13 +56,19 @@ its critical section.
 
 ## Question 4
 
+### Sequential consistency
+
 -fig 2a. is sequentially consistent. Indeed, the sequential execution write(0), write(1), read(1), write(2), read(2), read(2), write(3) satisfies the requirements to be sequentially consistent.
 
 -fig 2b  is not sequentially consistent. Assume it was. In order to read(2), write(1) must occur sometime before read(2) and write(2) must occur sometime between write(1) and read(2). So the order needs to be (i) write(1)->write(2)->read(2). In order to read(1), write(2) must occur some time before read(1) and write(1) must occur some time between write(2) and read(1). So the order needs to be (ii) write(2)->write(1)->read(1). Clearly (i) and (ii) contradict each other, meaning the history is not sequentially consistent.
 
--Neither histories are linearizable:
+### Linearizability
 
-### TODO add explanation
+-fig 2a.
+
+Not linearizable
+
+#### TODO add explanation
 
 -fig 2b.
 
