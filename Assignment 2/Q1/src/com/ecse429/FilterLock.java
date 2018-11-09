@@ -2,33 +2,37 @@ package com.ecse429;
 
 
 import java.util.concurrent.TimeUnit;
+import java.util.concurrent.atomic.AtomicInteger;
 import java.util.concurrent.locks.Condition;
 import java.util.concurrent.locks.Lock;
 
 public class FilterLock implements Lock {
 
-    long[] level;
-    long[] victim;
+    int threadID;
+    AtomicInteger[] level;
+    AtomicInteger[] victim;
     private final int n;
 
-    public FilterLock(int n) {
+    public FilterLock(int n, int threadID) {
+        this.threadID = threadID;
         this.n = n;
-        level = new long[n];
-        victim = new long[n]; // use 1..n-1 for (int i = 0; i < n; i++)
+
+        level = new AtomicInteger[n];
+        victim = new AtomicInteger[n]; // use 1..n-1 for (int i = 0; i < n; i++)
         for (int i = 0; i < n; i++) {
-            level[i] = 0;
+            level[i] = new AtomicInteger();
+            victim[i] = new AtomicInteger();
         }
     }
 
     @Override
     public void lock() {
-        long me = Thread.currentThread().getId();
         for (int i = 1; i < n; i++) { // attempt level i
-            level[(int)me] = i;
-            victim[i] = me;
+            level[threadID] = new AtomicInteger(i);
+            victim[i] = new AtomicInteger(threadID);
             // spin while conflicts exist
             for(int k = 0; k < n ; k++)
-                while ((k != me) && (level[k] >= i && victim[i] == me)){};
+                while ((k != threadID) && (level[k].get() >= i && victim[i].get() == threadID)){};
 
         }
     }
@@ -50,8 +54,7 @@ public class FilterLock implements Lock {
 
     @Override
     public void unlock() {
-        long me = Thread.currentThread().getId();
-        level[(int)me] = 0;
+        level[threadID] = new AtomicInteger();
     }
 
     @Override
