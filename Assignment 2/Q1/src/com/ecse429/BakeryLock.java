@@ -1,7 +1,5 @@
 package com.ecse429;
 
-import java.awt.*;
-import java.util.Arrays;
 import java.util.concurrent.TimeUnit;
 import java.util.concurrent.atomic.AtomicBoolean;
 import java.util.concurrent.atomic.AtomicInteger;
@@ -35,11 +33,15 @@ public class BakeryLock implements Lock {
         flag[currentThreadID()] = new AtomicBoolean(true);
         AtomicInteger max = new AtomicInteger();
 
+        // Get the max label
         for (AtomicInteger atomicInteger : label) {
             max = new AtomicInteger(Math.max(atomicInteger.get(), max.get()));
         }
+
+        // Increment max
         max.incrementAndGet();
 
+        // Set current thread to max
         label[currentThreadID()] = max;
 
         for(int k = 0; k < n ; k++)

@@ -4,7 +4,7 @@ import java.util.concurrent.locks.Lock;
 
 public class Main {
     public static void main(String[] args) throws InterruptedException {
-        int nThreads = 100;
+        int nThreads = 10;
 
         Thread[] pool = new SampleThread[nThreads];
 
@@ -26,8 +26,8 @@ public class Main {
 class SampleThread extends Thread implements Runnable{
 
     /* Toggle to switch lock type */
-    private static final FilterLock lock = new FilterLock(100);
-//    private static final BakeryLock lock = new BakeryLock(100);
+//    private static final FilterLock lock = new FilterLock(10);
+    private static final BakeryLock lock = new BakeryLock(10);
 
     static boolean critical = false;
 
@@ -50,7 +50,7 @@ class SampleThread extends Thread implements Runnable{
         System.out.println(String.format("Thread %d in critical section", lock.currentThreadID()));
 
         try {
-            Thread.sleep(10);
+            Thread.sleep(200);
         } catch (InterruptedException e) {}
 
         critical = false;

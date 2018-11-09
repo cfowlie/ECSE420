@@ -35,7 +35,7 @@ public class FilterLock implements Lock {
             victim[i] = new AtomicInteger(currentThreadID());
             // spin while conflicts exist
             for(int k = 0; k < n ; k++)
-                while ((k != currentThreadID()) && (level[k].get() >= i && victim[i].get() == currentThreadID())){};
+                while ((k != currentThreadID()) && (level[k].get() >= i && victim[i].get() == currentThreadID()));
 
         }
     }

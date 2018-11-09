@@ -3,14 +3,19 @@
 
 ## Question 1
 
+1.1) See FilterLock.java within Q1 folder for implementation.
 
 1.2) Within a loop iteration, it is impossible for a thread to overtake another, because that would mean changing "victim". Doing so immediately releases the thread waiting in the while loop.
 
 Now, let A be a thread that just completed the first for loop, i.e completed level[1]. Suppose, because of scheduling, A gets paused. It is then possible for any other thread which has already also completed level[1] to overtake A.
 
-#### TODO 1.4)
+1.3) See BakeryLock.hava within Q1 folder for implementation.
 
-#### TODO 1.5)
+1.4) BakeryLock is a first come first serve protocol, therefore the threads should execute in sequential order and not allow any overtaking. Note that at very high number of threads in our example code (say 100) that overtaking begins to happen in small amounts. This is due to some threads running with incorrect labels as the number of virtual threads greatly exceeds the number of physical threads, and labels are not perfectly syncronized.
+
+1.5) This can be tested by spinning up a pool of threads, and initializing a boolean that tracks if any thread is in a "critical" section. Each thread will lock and then set the shared critical bool to true, execute its critical section (wait) and then unset the critical bool and unlock. If any thread can lock while the shared critical section boolean is set to true (meaning another thread is within its critical section), then the mutual exclusion has failed.
+
+1.6) See Main.java in Q1 for implementation.
 
 ## Question 2
 In order to answer the question, we must first define the difference between atomic registers & regular registers. In an atomic register, read() will always return the last written value. In a regular register however, if a read overlaps a write then it may return that written value, or possibly the previous one.
