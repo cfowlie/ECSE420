@@ -40,7 +40,7 @@ class SampleThread extends Thread implements Runnable{
 
         lock.lock();
 
-        if(critical){
+        if(critical){ // If any ofther thread is in critical, mutex failed
             System.out.println("Mutual Exclusion Failed");
             System.exit(1);
         }
@@ -54,6 +54,7 @@ class SampleThread extends Thread implements Runnable{
         } catch (InterruptedException e) {}
 
         critical = false;
+
         lock.unlock();
     }
 
