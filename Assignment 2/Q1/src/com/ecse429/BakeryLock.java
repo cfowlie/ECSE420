@@ -3,32 +3,48 @@ package com.ecse429;
 import java.awt.*;
 import java.util.Arrays;
 import java.util.concurrent.TimeUnit;
+import java.util.concurrent.atomic.AtomicBoolean;
+import java.util.concurrent.atomic.AtomicInteger;
 import java.util.concurrent.locks.Condition;
 import java.util.concurrent.locks.Lock;
 
 public class BakeryLock implements Lock {
 
-    boolean[] flag;
-    long[] label;
+    AtomicBoolean[] flag;
+    AtomicInteger[] label;
     private final int n;
 
     public BakeryLock(int n){
         this.n = n;
-        flag = new boolean[n];
-        label = new long[n];
+        flag = new AtomicBoolean[n];
+        label = new AtomicInteger[n];
         for (int i = 0; i < n; i++) {
-            flag[i] = false;
-            label[i] = 0;
+            flag[i] = new AtomicBoolean();
+            label[i] = new AtomicInteger();
         }
+    }
+
+    public int currentThreadID(){
+        String name = Thread.currentThread().getName();
+        int threadID = Integer.parseInt(name.split("-")[1]);
+        return threadID;
     }
 
     @Override
     public void lock() {
-        long me = Thread.currentThread().getId();
-        flag[(int)me] = true;
-        label[(int)me] = Arrays.stream(label).max().getAsLong() + 1;
+        flag[currentThreadID()] = new AtomicBoolean(true);
+        AtomicInteger max = new AtomicInteger();
+
+        for (AtomicInteger atomicInteger : label) {
+            max = new AtomicInteger(Math.max(atomicInteger.get(), max.get()));
+        }
+        max.incrementAndGet();
+
+        label[currentThreadID()] = max;
+
         for(int k = 0; k < n ; k++)
-            while((k!=me) && flag[k] && (label[k] < label[(int)me] || (label[k] == label[(int)me] && k < me)));
+            while((k!=currentThreadID()) && flag[k].get() && (label[k].get() < label[currentThreadID()].get()
+                    || (label[k].get() == label[currentThreadID()].get() && k < currentThreadID())));
     }
 
     @Override
@@ -48,11 +64,15 @@ public class BakeryLock implements Lock {
 
     @Override
     public void unlock() {
-        flag[(int) Thread.currentThread().getId()] = false;
+        String name = Thread.currentThread().getName();
+        int threadID = Integer.parseInt(name.split("-")[1]);
+
+        flag[threadID] = new AtomicBoolean();
     }
 
     @Override
     public Condition newCondition() {
         return null;
     }
+
 }

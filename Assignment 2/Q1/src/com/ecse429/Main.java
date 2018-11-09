@@ -4,41 +4,35 @@ import java.util.concurrent.locks.Lock;
 
 public class Main {
     public static void main(String[] args) throws InterruptedException {
-        int nThreads = 5;
+        int nThreads = 100;
 
-        Thread[] pool = new Thread[nThreads];
+        Thread[] pool = new SampleThread[nThreads];
 
         for (int i = 0; i < nThreads; i++) {
-            pool[i] = new Thread(new SampleThread(i));
+            pool[i] = new SampleThread();
         }
-        for (int i = 0; i < nThreads; i++) {
-            pool[i].start();
+
+        for (int j = 0; j < nThreads; j++) {
+            pool[j].start();
         }
-        for (int i = 0; i < nThreads; i++) {
-            pool[i].join();
+
+        for (int k = 0; k < nThreads; k++) {
+            pool[k].join();
         }
 
     }
 }
 
-class SampleThread implements Runnable{
+class SampleThread extends Thread implements Runnable{
 
-    private static Lock lock;
-    private static int threadID;
-    boolean critical;
+    /* Toggle to switch lock type */
+    private static final FilterLock lock = new FilterLock(100);
+//    private static final BakeryLock lock = new BakeryLock(100);
 
-    SampleThread(int threadID){
+    static boolean critical = false;
+
+    SampleThread(){
         super();
-
-        this.threadID = threadID;
-
-        /* Toggle to switch lock type */
-
-        lock = new FilterLock(5, threadID);
-        //lock = new BakeryLock(5);
-
-        // No thread starts in critical section
-        critical = false;
     }
 
     @Override
@@ -53,10 +47,10 @@ class SampleThread implements Runnable{
 
         critical = true;
 
-        System.out.println(String.format("Thread %d in critical section", threadID));
+        System.out.println(String.format("Thread %d in critical section", lock.currentThreadID()));
 
         try {
-            Thread.sleep(1000);
+            Thread.sleep(10);
         } catch (InterruptedException e) {}
 
         critical = false;

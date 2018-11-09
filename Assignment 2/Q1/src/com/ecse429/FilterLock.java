@@ -8,15 +8,12 @@ import java.util.concurrent.locks.Lock;
 
 public class FilterLock implements Lock {
 
-    int threadID;
     AtomicInteger[] level;
     AtomicInteger[] victim;
     private final int n;
 
-    public FilterLock(int n, int threadID) {
-        this.threadID = threadID;
+    public FilterLock(int n) {
         this.n = n;
-
         level = new AtomicInteger[n];
         victim = new AtomicInteger[n]; // use 1..n-1 for (int i = 0; i < n; i++)
         for (int i = 0; i < n; i++) {
@@ -25,14 +22,20 @@ public class FilterLock implements Lock {
         }
     }
 
+    public int currentThreadID(){
+        String name = Thread.currentThread().getName();
+        int threadID = Integer.parseInt(name.split("-")[1]);
+        return threadID;
+    }
+
     @Override
     public void lock() {
         for (int i = 1; i < n; i++) { // attempt level i
-            level[threadID] = new AtomicInteger(i);
-            victim[i] = new AtomicInteger(threadID);
+            level[currentThreadID()] = new AtomicInteger(i);
+            victim[i] = new AtomicInteger(currentThreadID());
             // spin while conflicts exist
             for(int k = 0; k < n ; k++)
-                while ((k != threadID) && (level[k].get() >= i && victim[i].get() == threadID)){};
+                while ((k != currentThreadID()) && (level[k].get() >= i && victim[i].get() == currentThreadID())){};
 
         }
     }
@@ -54,6 +57,9 @@ public class FilterLock implements Lock {
 
     @Override
     public void unlock() {
+        String name = Thread.currentThread().getName();
+        int threadID = Integer.parseInt(name.split("-")[1]);
+
         level[threadID] = new AtomicInteger();
     }
 
@@ -61,5 +67,7 @@ public class FilterLock implements Lock {
     public Condition newCondition() {
         return null;
     }
+
+
 
 }
