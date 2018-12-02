@@ -5,43 +5,13 @@ import java.util.concurrent.FutureTask;
 
 public class ParallelMatrixVectorMultiply {
     private static final int NUMBER_THREADS = 32;
-    private static final int MATRIX_SIZE =2048;
     private static final int THRESHOLD = 64;
     private static final ExecutorService executor = Executors.newFixedThreadPool(NUMBER_THREADS);
 
-    public static void main(String[] args){
-        double[][] matrix = generateRandomMatrix(MATRIX_SIZE, MATRIX_SIZE);
-        double[] vector = generateRandomVector(MATRIX_SIZE);
 
-        double seqStart = System.nanoTime();
-        double[] seqResult = sequentialMultiply(matrix,vector);
-        double seqEnd = System.nanoTime();
-        printVector(seqResult);
-
-        double parStart = System.nanoTime();
-        double[] result = parallelMultiply(matrix,vector);
-        double parEnd = System.nanoTime();
-        printVector(result);
-
-        System.out.println("Time taken for Sequential :" +(seqEnd-seqStart)/1000000000 + " Seconds");
-        System.out.println("Time taken for Parallel :" +(parEnd-parStart)/1000000000 + " Seconds");
-
-    }
-
-    public static double[] sequentialMultiply(double[][] matrix, double[] vector){
-        double[] result = new double[MATRIX_SIZE];
-        for(int i=0;i<MATRIX_SIZE;i++) {
-            result[i] = 0;
-            for (int j = 0; j < MATRIX_SIZE; j++) {
-                result[i] += matrix[i][j] * vector[j];
-            }
-        }
-        return result;
-    }
-
-    public static double[] parallelMultiply(double[][] matrix, double[] vector){
-        double[] res= new double[MATRIX_SIZE];
-        Future f1 = executor.submit(new Multiply(matrix,vector,res,0,0,0,0,MATRIX_SIZE));
+    public static double[] parallelMultiply(double[][] matrix, double[] vector,int matrix_size){
+        double[] res= new double[matrix_size];
+        Future f1 = executor.submit(new Multiply(matrix,vector,res,0,0,0,0,matrix_size));
         try{
             f1.get();
             executor.shutdown();
@@ -77,7 +47,6 @@ public class ParallelMatrixVectorMultiply {
                 for (int i = 0; i < size; i++) {
                     for (int j = 0; j < size; j++) {
                         res[res_row + i] += matrix[mat_row + i][mat_col + j] * vector[vec_row + j];
-
                     }
                 }
             } else {
@@ -94,25 +63,11 @@ public class ParallelMatrixVectorMultiply {
 
                 };
                 FutureTask[] fs1 = new FutureTask[2];
-//                FutureTask fs1 = new FutureTask(new HelperSeq(todo[0], todo[1], todo[2], todo[3]), null);
-//                fs1.run();
-//                try {
-//                    fs1.get();
-//                } catch (Exception e){
-
-//                }
                 fs1[0] = new FutureTask(new HelperSeq(todo[0],todo[1]),null);
                 fs1[1] = new FutureTask(new HelperSeq(todo[2],todo[3]),null);
                 for (int i = 0; i < fs1.length; ++i) {
                     fs1[i].run();
                 }
-//                try {
-//                    for (int i = 0; i < fs1.length; ++i) {
-//                        fs1[i].get();
-//                    }
-//                } catch (Exception e) {
-//
-//                }
             }
 
         }
@@ -122,7 +77,8 @@ public class ParallelMatrixVectorMultiply {
 
 
         private Multiply m1, m2;
-        HelperSeq(Multiply m1, Multiply m2){
+        HelperSeq(Multiply m1, Multiply m2
+        ){
             this.m1 = m1;
             this.m2 = m2;
         }
@@ -133,48 +89,4 @@ public class ParallelMatrixVectorMultiply {
 
     }
 
-
-    // GenerateRandomMatrix method taken from A1
-
-    private static double[][] generateRandomMatrix (int numRows, int numCols) {
-        double matrix[][] = new double[numRows][numCols];
-        for (int row = 0 ; row < numRows ; row++ ) {
-            for (int col = 0 ; col < numCols ; col++ ) {
-                matrix[row][col] = (double) ((int) (Math.random() * 10.0));
-            }
-        }
-        return matrix;
-    }
-
-    // GenerateRandomVector method adapted from the above method
-
-    private static double[] generateRandomVector(int numRows){
-        double vector[] = new double[numRows];
-        for(int row = 0;row < numRows ; row++){
-            vector[row]=(double) ((int) (Math.random()*10.0));
-        }
-        return vector;
-    }
-
-    //Helper method to print a Matrix
-
-    private static void printMatrix(double[][] matrix){
-        for(int i=0;i<matrix.length;i++){
-            System.out.print("| ");
-            for(int j=0;j<matrix[i].length;j++){
-                System.out.print(matrix[i][j]+ " ");
-            }
-            System.out.println("|");
-        }
-    }
-
-    //Helper method to print a Vector
-
-    private static void printVector(double[] vector){
-        System.out.print("| ");
-        for(int i=0;i< vector.length;i++){
-            System.out.print(vector[i]+ " ");
-        }
-        System.out.println("|");
-    }
 }

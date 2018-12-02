@@ -1,24 +1,38 @@
 public class SequentialMatrixVectorMultiply {
-    private static final int MATRIX_SIZE = 4;
-    public static void main(String[] args){
-        double[][] matrix = generateRandomMatrix(MATRIX_SIZE,MATRIX_SIZE);
-        double[] vector = generateRandomVector(MATRIX_SIZE);
-        double[] result = new double[MATRIX_SIZE];
-        for(int i=0;i<MATRIX_SIZE;i++){
-            result[i]=0;
-            for(int j=0;j<MATRIX_SIZE;j++){
-                result[i]+=matrix[i][j]*vector[j];
+//    private static final int MATRIX_SIZE = 4;
+//    public static void main(String[] args){
+//        double[][] matrix = generateRandomMatrix(MATRIX_SIZE,MATRIX_SIZE);
+//        double[] vector = generateRandomVector(MATRIX_SIZE);
+//        double[] result = new double[MATRIX_SIZE];
+//        for(int i=0;i<MATRIX_SIZE;i++){
+//            result[i]=0;
+//            for(int j=0;j<MATRIX_SIZE;j++){
+//                result[i]+=matrix[i][j]*vector[j];
+//            }
+//        }
+//
+//        //Test to see
+//
+//        System.out.println("Test Matrix:\n");
+//        printMatrix(matrix);
+//        System.out.println("\nTest Vector:\n");
+//        printVector(vector);
+//        System.out.println("\nResult:\n");
+//        printVector(result);
+//    }
+
+    public static double[] sequentialMultiply(double[][] matrix, double[] vector, int matrix_size) {
+        double[] result = new double[matrix_size];
+        for (int i=0;i<matrix_size;i++){
+            for (int j=0;j<matrix_size;j++) {
+                result[i] = 0;
+                for (int k = 0; k < matrix_size; k++) {
+                    result[i] += matrix[i][k] * vector[k];
+                }
             }
         }
+        return result;
 
-        //Test to see
-
-        System.out.println("Test Matrix:\n");
-        printMatrix(matrix);
-        System.out.println("\nTest Vector:\n");
-        printVector(vector);
-        System.out.println("\nResult:\n");
-        printVector(result);
     }
 
     private static void printMatrix(double[][] matrix){

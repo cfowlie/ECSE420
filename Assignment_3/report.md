@@ -28,10 +28,10 @@ The reason our code works is very simple. We know our FineGrainedLock list is so
 
 ## Question 4
 
-4.1) See SequentialMatrixVectorMultiply.java
+4.1) See SequentialMatrixVectorMultiply.java.
 
-4.2) See ParallelMatrixVectorMultiply.java
+4.2) See ParallelMatrixVectorMultiply.java.
 
-4.3)
+4.3) See MatrixMultiplyTest.java. For the Parellel operation, there were 32 threads used. The runtime we got was 8.576 seconds for Sequential, and 0.397 for Parallel execution. That is a speedup of 8.576/0.397=21.60.
 
 4.4)
