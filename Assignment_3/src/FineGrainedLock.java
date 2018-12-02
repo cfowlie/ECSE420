@@ -39,32 +39,37 @@ public class FineGrainedLock<T> {
     public boolean contains(T item){
         int key = item.hashCode();
 
-        Node pred = null;
-        Node curr = null;
+        Node predNode = null;
+        Node currNode = null;
 
         head.lock();
         try {
-            pred = head;
-            curr = pred.next;
-            curr.lock();
+            predNode = head;
+            currNode = predNode.next;
+            currNode.lock();
             try {
 
-                while (curr.key < key) {
-                    pred.unlock();
-                    pred = curr;
-                    curr = curr.next;
-                    curr.lock();
+                //Iterate to the next smaller key to our key
+
+                while (currNode.key < key) {
+                    predNode.unlock();
+                    predNode = currNode;
+                    currNode = currNode.next;
+                    currNode.lock();
                 }
-                if (curr.key == key) {
+
+                //Check if the next key is our key
+
+                if (currNode.key == key) {
                     return true;
                 } else {
                     return false;
                 }
             }finally {
-                curr.unlock();
+                currNode.unlock();
             }
         }finally{
-            pred.unlock();
+            predNode.unlock();
         }
     }
 
