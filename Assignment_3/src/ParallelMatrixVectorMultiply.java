@@ -4,7 +4,7 @@ import java.util.concurrent.Executors;
 import java.util.concurrent.FutureTask;
 
 public class ParallelMatrixVectorMultiply {
-    private static final int NUMBER_THREADS = 16;
+    private static final int NUMBER_THREADS = 32;
     private static final int MATRIX_SIZE =2048;
     private static final int THRESHOLD = 64;
     private static final ExecutorService executor = Executors.newFixedThreadPool(NUMBER_THREADS);
@@ -12,10 +12,19 @@ public class ParallelMatrixVectorMultiply {
     public static void main(String[] args){
         double[][] matrix = generateRandomMatrix(MATRIX_SIZE, MATRIX_SIZE);
         double[] vector = generateRandomVector(MATRIX_SIZE);
-        double[] result = parallelMultiply(matrix,vector);
+
+        double seqStart = System.nanoTime();
         double[] seqResult = sequentialMultiply(matrix,vector);
+        double seqEnd = System.nanoTime();
         printVector(seqResult);
+
+        double parStart = System.nanoTime();
+        double[] result = parallelMultiply(matrix,vector);
+        double parEnd = System.nanoTime();
         printVector(result);
+
+        System.out.println("Time taken for Sequential :" +(seqEnd-seqStart)/1000000000 + " Seconds");
+        System.out.println("Time taken for Parallel :" +(parEnd-parStart)/1000000000 + " Seconds");
 
     }
 
@@ -84,20 +93,26 @@ public class ParallelMatrixVectorMultiply {
                                 res_row + half, half)
 
                 };
-                FutureTask[] fs1 = new FutureTask[todo.length / 2];
+                FutureTask[] fs1 = new FutureTask[2];
+//                FutureTask fs1 = new FutureTask(new HelperSeq(todo[0], todo[1], todo[2], todo[3]), null);
+//                fs1.run();
+//                try {
+//                    fs1.get();
+//                } catch (Exception e){
 
+//                }
                 fs1[0] = new FutureTask(new HelperSeq(todo[0],todo[1]),null);
                 fs1[1] = new FutureTask(new HelperSeq(todo[2],todo[3]),null);
                 for (int i = 0; i < fs1.length; ++i) {
                     fs1[i].run();
                 }
-                try {
-                    for (int i = 0; i < fs1.length; ++i) {
-                        fs1[i].get();
-                    }
-                } catch (Exception e) {
-
-                }
+//                try {
+//                    for (int i = 0; i < fs1.length; ++i) {
+//                        fs1[i].get();
+//                    }
+//                } catch (Exception e) {
+//
+//                }
             }
 
         }
