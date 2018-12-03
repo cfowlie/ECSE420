@@ -1,3 +1,4 @@
+
 public class SequentialMatrixVectorMultiply {
 
     public static double[] sequentialMultiply(double[][] matrix, double[] vector, int matrix_size) {
