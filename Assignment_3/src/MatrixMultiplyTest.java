@@ -9,14 +9,13 @@ public class MatrixMultiplyTest {
         double seqStart = System.nanoTime();
         double[] seqResult = SequentialMatrixVectorMultiply.sequentialMultiply(matrix,vector,MATRIX_SIZE);
         double seqEnd = System.nanoTime();
-        printVector(seqResult);
+
 
         double parStart = System.nanoTime();
         double[] result = ParallelMatrixVectorMultiply.parallelMultiply(matrix,vector,MATRIX_SIZE);
         double parEnd = System.nanoTime();
-        printVector(result);
 
-        System.out.println("Time taken for Sequential : " +(seqEnd-seqStart)/1000000000 + " Seconds");
+        System.out.println("\nTime taken for Sequential : " +(seqEnd-seqStart)/1000000000 + " Seconds");
         System.out.println("\nTime taken for Parallel : " +(parEnd-parStart)/1000000000 + " Seconds");
     }
 

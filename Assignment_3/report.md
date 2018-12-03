@@ -22,9 +22,9 @@ The reason our code works is very simple. We know our FineGrainedLock list is so
 
 ## Question 3
 
-3.1)
+3.1) See BoundedQueueLock.java.
 
-3.2)
+3.2) See LockFreeBoundedQueue. We ran into difficulty when trying to choose the valid indices to be read or written. Adding two atomic variables, one representing the space left in our queue for our items to be written into, the other to represent the indices that can be validly read.
 
 ## Question 4
 
