@@ -14,7 +14,7 @@
 
 3: Once the stride is larger than the cache, then every single memory is a cache miss, which is why average memory access time has a ceiling of t1.
 
-1.4)
+1.4) Padding would degrade the overall performance since padding the memory would mean less of our array's elements fit in the cache, creating more and more cache misses, which greatly increases memory access time.
 
 ## Question 2
 
@@ -36,6 +36,10 @@ The reason our code works is very simple. We know our FineGrainedLock list is so
 
 4.2) See ParallelMatrixVectorMultiply.java.
 
-4.3) See MatrixMultiplyTest.java. For the Parellel operation, there were 32 threads used. The runtime we got was 8.576 seconds for Sequential, and 0.397 for Parallel execution. That is a speedup of 8.576/0.397=21.60.
+4.3) See MatrixMultiplyTest.java. For the Parellel operation, there were 16 threads used. For a matrix of size 2048x2048, threading is too inefficient . The parallel's threads' overhead is too large to create a speedup on a matrix that small. However, we did get a small speedup on a 8192x8192 matrix: 0.0364 for sequential, and 0.0293 for Parallel. That is a speedup of 0.0364/0.0293=1.24
 
-4.4)
+4.4) There is no critical in our implementation as all threads write to separate sections of the result array (vector) and therefore no locking is needed.
+
+As for our work, we set the matrix division threshold dynamically using matrix size and number of threads such that each submatri is of even size. This allows for maximum parallelization & maximum speedup.
+
+Overall, unless you're doing extremely large calculations, parallelization is not worth it for matrix by vector multiplication as the sequential method is fast enough such that the thread overhead is too significant for the parallel method to create any real speedup.

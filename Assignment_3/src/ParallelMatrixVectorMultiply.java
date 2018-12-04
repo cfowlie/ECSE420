@@ -4,9 +4,10 @@ import java.util.concurrent.Executors;
 import java.util.concurrent.FutureTask;
 
 public class ParallelMatrixVectorMultiply {
-    private static final int NUMBER_THREADS = 32;
-    private static final int THRESHOLD = 64;
+    private static final int NUMBER_THREADS = 8;
+    private static final int MATRIX_SIZE = 8192;
     private static final ExecutorService executor = Executors.newFixedThreadPool(NUMBER_THREADS);
+    private static final int THRESHOLD = MATRIX_SIZE/(int)(Math.log(NUMBER_THREADS)/Math.log(4)*2);
 
 
     public static double[] parallelMultiply(double[][] matrix, double[] vector,int matrix_size){
