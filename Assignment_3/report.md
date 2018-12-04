@@ -4,11 +4,15 @@
 
 ## Question 1
 
-1.1)
+1.1) L' is the cache size. t0 is the time to fetch a cache hit. If the entire array can fit in the cache, time to fetch a hit will be constant since they are all cache hits.
 
-1.2)
+1.2) t1 indicates time to fetch for a cache miss.
 
-1.3)
+1.3) 1: The time to fetch a cache hit is constant. see 1.1.
+
+2: as the stride increases, the less elements we can have in our cache, meaning cache misses become more and more likely, which increases the average access time.
+
+3: Once the stride is larger than the cache, then every single memory is a cache miss, which is why average memory access time has a ceiling of t1.
 
 1.4)
 
